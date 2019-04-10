@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>识别验证码</title>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<script src="/js/bootstrap.min.js"></script>
+
+<style>
+div#text {
+    width: 360px;
+
+    background-color: #FFF300;
+    padding: 10px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    border-radius: 10px;
+
+    }
+div#body {
+     width: 520px;
+
+     background-color: #00BB00;
+     padding: 5px;
+     border-style: solid;
+     border-width: 2px;
+     border-color: green;
+     border-radius: 20px;
+     margin: 20px
+ }
+
+div#right {
+	width: 100px;
+}
+
+div.container {
+	width: 95%;
+	margin: 10px;
+	
+}
+
+select#lables{
+	width:80px;
+	height:30px;
+	background-color: #AAF311;
+}
+</style>
+
+</head>
+<body style="margin: 10px;" >
+<div align="center">
+	<div id="body">
+		<h1>验证码识别程序</h1>
+		<br/>
+		<div id="text">
+		<p>&nbsp;&nbsp;你可以在下面的下拉列表里选择要使用的验证码，列表中的选项是验证码的真实值,对应
+			的验证码图片灰寨中间部分显示。右边是识别结果。识别过程需要花费几秒钟，如果验证码数字少于6个
+			会在后面补0；</p>
+		</div>
+		<br/>
+		<div class="container" >
+			<div class="row">
+				<div class="col-xs-3" style="text-align:left;padding-left:0px;">
+				    请选择验证码：
+					<select id="lables">
+					<#list lables as lable>
+					<option value="${lable}">${lable}</option>
+					</#list>
+					</select>
+				</div>
+				<div class="col-xs-5" style="padding-left:0px；">
+					<img id="selectedImage" src="?"  height="90%" alt="请在左边下拉列表中选择验证码！" />
+			   </div>
+			   <div class="col-xs-4">
+			   		识别结果是：
+			   		<div style="border:1px solid blue;background-color:white;width:120px;height:30px;" id="result"
+			   			
+			   		></div>
+			   </div>
+			</div>
+		</div>
+		
+		<div >
+		
+		
+					<button class="btn btn-info" onclick="recognize()">进行识别</button>
+	
+		
+					<button class="btn btn-info" onclick="javascript:history.go(-1)">返回</button>
+		
+			
+					<button class="btn btn-info" onclick="javascript:history.go(-2)">返回到首页</button>
+		
+			
+		</div>
+		
+
+		
+	</div>
+</div>
+
+<script>
+var selected_data = null;
+		$(document).ready(function() {
+		
+			var selected = $('#lables option:selected').val();
+			selected_data = selected;
+			if (selected === null) {
+				alert("请选择图片？");
+			} else {
+				document.getElementById("selectedImage").src = "../captchaImage/train/"
+						+ selected + ".jpeg";
+			}
+
+			$("#lables").change(function() {
+				var selected = $('#lables option:selected').val();
+				selected_data = selected;
+				document.getElementById("selectedImage").src = "../captchaImage/train/"
+					+ selected + ".jpeg";
+			});
+			
+			
+			
+			
+			});
+				
+		function recognize(){
+			 $.ajax({
+
+		            url: "/verifyCode/recognize",
+		            type: 'post',
+		            data: {
+		                lable: selected_data
+		            },
+		            success: function (msg) {
+		         //       alert(msg);
+						$("#result").text("");
+						$("#result").append(msg);
+		            }
+		        });
+		}
+		
+	</script>
+</body>
+
+</html>
