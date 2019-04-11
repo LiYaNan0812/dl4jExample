@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        div#text {
+            width: 320px;
+
+            background-color: #FFF300;
+            padding: 5px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: black;
+            border-radius: 10px;
+
+        }
+
+        div#body {
+            width: 520px;
+
+            background-color: #00BB00;
+            padding: 5px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: green;
+            border-radius: 20px;
+            margin: 20px
+        }
+        </style>
+</head>
+<body style="margin: 0px;">
+<div align="center">
+    <div id="body">
+        <h1>java与人工智能首页</h1>
+        <br/>
+        <div id="text">
+			<p> &nbsp; &nbsp;这里有两个关于Java与人工智能的小项目，你可以选择相应的按钮执行对应的程序！</p>
+		</div>
+
+        <br/>
+        <div>
+            <button id="tranning"  type="button" class="btn btn-info" onclick="location.href='mnist'">进入手写数字识别程序</button>
+            <button id="show" type="button" class="btn btn-info" onclick="location.href='/verifyCode/verifyCodeRecognition'">进入验证码识别页面</button>     
+        </div>
+  
+    </div>
+</div>
+</body>
+</html>

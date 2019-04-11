@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>handwriting numerals recognition</title>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
+
+    <style>
+        #canvas {
+            margin: 0px;
+            background-color: #000000;
+            border: 2px solid red;
+        }
+    </style>
+
+
+</head>
+<body style="margin: 0px;">
+<div>
+    <div id="up" align="center">
+        <canvas id="canvas" width="280" height="280"></canvas>
+    </div>
+    <div id="down" align="center">
+        <button type="button" class="btn btn-default" onclick="clean()">清除</button>        
+        <button type="button" class="btn btn-primary" onclick="save()" id="btn">保存</button>
+        <!-- <button onclick="saveImageInfo()" id="btn">保存2</button> -->
+        <button type="button" class="btn btn-info" onclick="javascript:history.go(-1)">返回</button>
+    </div>
+
+</div>
+</body>
+
+
+<script type="text/javascript">
+
+    document.getElementById("btn").disabled = true;
+    // 获取 canvas 对象  
+    var canvas = document.getElementById('canvas');
+    // 获取绘图环境  
+    var ctx = canvas.getContext('2d');
+
+    var last = null;
+
+    // 文件对象  
+    var filedata = null;
+
+    // 鼠标按下  
+    canvas.onmousedown = function () {
+        // 在鼠标按下后触发鼠标移动事件  
+        canvas.onmousemove = move;
+        document.getElementById("btn").disabled = false;
+    }
+
+    // 鼠标抬起取消鼠标移动的事件  
+    canvas.onmouseup = function () {
+        canvas.onmousemove = null;
+        last = null;
+    }
+
+    // 鼠标移出画布时 移动事件也要取消。  
+    canvas.onmouseout = function () {
+        canvas.onmousemove = null;
+        last = null;
+    }
+
+    // 鼠标移动函数  
+    function move(e) {
+        // console.log(e.offsetX);  
+        if (last != null) {
+            ctx.beginPath();
+            ctx.strokeStyle = "#FFFFFF";
+            ctx.moveTo(last[0], last[1]);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.lineJoin = "round";
+            ctx.miterLimit = 10;
+            ctx.lineCap = "round";
+            ctx.lineWidth = 10;
+            ctx.stroke();
+        }
+        // 第一次触发这个函数，只做一件事，把当前 鼠标的 x , y 的位置记录下来  
+        // 做下一次 线段的 起始点。  
+        last = [e.offsetX, e.offsetY];
+
+    }
+
+    // 重新在画  
+    function clean() {
+        document.getElementById("btn").disabled = true;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        //   drawImg(filedata);  
+
+    }
+
+    // 绘制图片  
+    function drawImg(filedata) {
+
+        var readFile = new FileReader();
+
+        readFile.readAsDataURL(filedata);
+
+        // 图片读取成功  
+        readFile.onload = function () {
+
+            var Img = new Image();
+            Img.src = this.result;
+
+            Img.onload = function () {
+                // 根据 图片的 宽高 来 设置canvas 宽和高   
+                canvas.width = Img.width;
+                canvas.height = Img.height;
+                ctx.drawImage(Img, 0, 0);
+            }
+        }
+    }
+
+    function save() {
+        var saveImage = canvas.toDataURL('image/png');//保存画布成“image/png"格式的图片数据
+        var b64 = saveImage.substring(22);//去除前面22个附加字符
+
+        $.ajax({
+            url: "/imageRecognition",
+            type: 'post',
+            data: {
+                picture: b64
+            },
+            success: function (msg) {
+                alert(msg);
+
+            }
+        });
+    }
+
+    /*  function saveImageInfo ()
+    {
+        //var mycanvas = document.getElementById("thecanvas");
+        var image    = canvas.toDataURL("image/png");
+        var w=window.open('about:blank','image from canvas');
+        w.document.write("<img src='"+image+"' alt='from canvas'/>");
+    }
+     */
+</script>
+
+</html>

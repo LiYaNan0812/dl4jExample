@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>mnist</title>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        div#text {
+            width: 360px;
+
+            background-color: #FFF300;
+            padding: 5px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: black;
+            border-radius: 30px;
+
+        }
+        div#text2{
+        	width:360px;
+        	background-color:#00CCCC;
+        	paddiing:5px;
+        	border:2px solid black;
+        	border-radius:10px;
+        }
+
+        div#body {
+            width: 600px;
+
+            background-color: #00BB00;
+            padding: 5px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: green;
+            border-radius: 20px;
+            margin: 20px
+        }
+       div.container{
+        width:100%;
+       	margin-top:20px;
+       }
+    
+       
+    </style>
+</head>
+<body>
+<div align="center">
+    <div id="body">
+        <h1>手写数字识别程序</h1>
+        <br/>
+        <div id="text">
+			<p> &nbsp; &nbsp; 点击链接开启训练神经网络的模型，由于训练数据和测试数据十分庞大，这可能需要花费几分钟时间。
+					我们已经为您训练好了一个模型，您可以直接使用而不必点击“训练模型”的按钮！</p>
+		</div>
+
+        <br/>
+        <div>
+            <button id="tranning"  type="button" class="btn btn-info" onclick="modelTranning()">训练模型</button>
+            <button id="show" type="button" class="btn btn-info" onclick="location.href='show'">进入程序页面</button>
+            <button type="button" class="btn btn-info" onclick="javascript:history.go(-1)">返回</button>
+        </div>
+	    <div class="container">
+			<div class="row">
+				<div class="col-xs-2 ">进度:</div>
+				<div class="col-xs-9 ">
+					<div id="progress_out" class="progress progress-striped active">
+					<div id="progress_in" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" 
+						aria-valuemin="1" aria-valuemax="100" style="width:1%;">
+					</div>
+					</div>
+				</div>
+				
+				<div class="col-xs-1"></div>
+	   		 </div>	
+        </div>
+        <div>评估结果：</div>
+        <div id="text2">
+        </div>
+        
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+
+	function modelTranning(){
+		var old_res=0;
+		var old_get_res=0;
+		var sitv = setInterval(function(){//设置一个定时器，每隔10秒查询一次服务器，获取进度，更新进度条
+			var prog_url="/getProgressNum";
+			
+			$.getJSON(prog_url,function(res){
+				if(res==old_get_res){ res=old_res+2;old_res=res;}
+				else{old_get_res=res;old_res=res;}				
+				
+				$('#progress_in').width(res+'%');
+			});
+		},10000);
+		
+	/* 	var this_url="/tranningOfModel";
+		$.getJSON(this_url,function(res){
+			
+			clearInterval(sitv);
+			$('#progress_out').attr("class","progress progress-bar-success");
+			alert("训练成功！");
+		}); */
+		$.ajax({
+			url:"/tranningOfModel",
+			success:function(msg){
+				clearInterval(sitv),
+				$('#progress_out').attr("class","progress progress-bar-success");
+				alert("训练成功！");
+				$('#text2').text("");
+				$('#text2').append(msg);
+			}
+		});
+	}
+
+
+   /*  function modelTranning() {
+        $.ajax({
+            url: "/tranningOfModel",
+            success: function () {
+                alert("训练成功！");
+
+            }
+        });
+
+    } */
+</script>
+</html>
